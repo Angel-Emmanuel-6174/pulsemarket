@@ -1,4 +1,4 @@
-// pagina del dashboard
+import { cookies } from "next/headers";
 import { Suspense } from "react";
 import { auth, signOut } from "@/auth";
 import { getDashboardData, updateSaleStatusAction } from "@/app/actions/dashboard";
@@ -31,6 +31,9 @@ async function DashboardContent() {
 }
 
 export default async function DashboardPage() {
+  // Forzar renderizado dinámico en tiempo de petición (evita prerender en build)
+  await cookies();
+
   const session = await auth();
 
   return (
