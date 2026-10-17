@@ -5,6 +5,7 @@ import { MetricsCards } from "@/components/dashboard/MetricsCards";
 import { MetricsSkeleton } from "@/components/dashboard/MetricsSkeleton";
 import { KanbanBoard } from "@/components/kanban/KanbanBoard";
 import { KanbanSkeleton } from "@/components/kanban/KanbanSkeleton";
+import Link from "next/link";
 
 // 1. Componente dinámico para el encabezado con la sesión del usuario
 async function DashboardHeader() {
@@ -20,19 +21,30 @@ async function DashboardHeader() {
           Bienvenido, <span className="font-semibold text-gray-700 dark:text-gray-200">{session?.user?.name || "Usuario"}</span> ({session?.user?.email})
         </p>
       </div>
-      <form
-        action={async () => {
-          "use server";
-          await signOut({ redirectTo: "/login" });
-        }}
-      >
-        <button
-          type="submit"
-          className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+
+      <div className="flex items-center gap-3">
+        {/* Enlace al CRUD Paginado */}
+        <Link
+          href="/dashboard/products"
+          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
         >
-          Cerrar Sesión
-        </button>
-      </form>
+          Ver Tabla CRUD (Productos/Ventas)
+        </Link>
+
+        <form
+          action={async () => {
+            "use server";
+            await signOut({ redirectTo: "/login" });
+          }}
+        >
+          <button
+            type="submit"
+            className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-700"
+          >
+            Cerrar Sesión
+          </button>
+        </form>
+      </div>
     </header>
   );
 }

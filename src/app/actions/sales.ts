@@ -9,9 +9,9 @@ import {
 } from "@/lib/validations/sale";
 
 // 1. Consulta Masiva Paginada con SLA < 400ms
-export async function getSales(params: SaleQueryInput) {
+export async function getSales(params?: Partial<SaleQueryInput>) {
   const startTime = Date.now();
-  const validated = saleQuerySchema.parse(params);
+  const validated = saleQuerySchema.parse(params ?? {});
   const { page, limit, search, status, sortBy, sortOrder } = validated;
 
   const skip = (page - 1) * limit;
