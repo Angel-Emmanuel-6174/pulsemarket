@@ -43,3 +43,4 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           DIRECT_URL: ${{ secrets.DIRECT_URL }}
+          AUTH_SECRET: "mock_secret_for_ci_build_only_1234567890"
