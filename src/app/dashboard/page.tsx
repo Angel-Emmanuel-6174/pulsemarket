@@ -1,4 +1,3 @@
-import { cookies } from "next/headers";
 import { Suspense } from "react";
 import { auth, signOut } from "@/auth";
 import { getDashboardData, updateSaleStatusAction } from "@/app/actions/dashboard";
@@ -7,6 +6,38 @@ import { MetricsSkeleton } from "@/components/dashboard/MetricsSkeleton";
 import { KanbanBoard } from "@/components/kanban/KanbanBoard";
 import { KanbanSkeleton } from "@/components/kanban/KanbanSkeleton";
 
+// 1. Componente dinámico para el encabezado con la sesión del usuario
+async function DashboardHeader() {
+  const session = await auth();
+
+  return (
+    <header className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+          Panel de Control - PulseMarket
+        </h1>
+        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+          Bienvenido, <span className="font-semibold text-gray-700 dark:text-gray-200">{session?.user?.name || "Usuario"}</span> ({session?.user?.email})
+        </p>
+      </div>
+      <form
+        action={async () => {
+          "use server";
+          await signOut({ redirectTo: "/login" });
+        }}
+      >
+        <button
+          type="submit"
+          className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+        >
+          Cerrar Sesión
+        </button>
+      </form>
+    </header>
+  );
+}
+
+// 2. Componente dinámico para las métricas y el Kanban
 async function DashboardContent() {
   const { metrics, initialKanbanData } = await getDashboardData();
 
@@ -30,41 +61,21 @@ async function DashboardContent() {
   );
 }
 
-export default async function DashboardPage() {
-  // Forzar renderizado dinámico en tiempo de petición (evita prerender en build)
-  await cookies();
-
-  const session = await auth();
-
+// 3. Contenedor principal síncrono compatible con pre-rendering estático de Next.js
+export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gray-50 p-6 dark:bg-gray-900 dark:text-white">
       <div className="mx-auto max-w-7xl space-y-6">
-        {/* Encabezado del Dashboard */}
-        <header className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-              Panel de Control - PulseMarket
-            </h1>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              Bienvenido, <span className="font-semibold text-gray-700 dark:text-gray-200">{session?.user?.name || "Usuario"}</span> ({session?.user?.email})
-            </p>
-          </div>
-          <form
-            action={async () => {
-              "use server";
-              await signOut({ redirectTo: "/login" });
-            }}
-          >
-            <button
-              type="submit"
-              className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
-            >
-              Cerrar Sesión
-            </button>
-          </form>
-        </header>
+        {/* Límite de Suspense para la sesión */}
+        <Suspense
+          fallback={
+            <div className="h-24 animate-pulse rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800" />
+          }
+        >
+          <DashboardHeader />
+        </Suspense>
 
-        {/* Contenido Principal con Skeletons */}
+        {/* Límite de Suspense para las métricas y Kanban */}
         <Suspense
           fallback={
             <div className="space-y-6">
