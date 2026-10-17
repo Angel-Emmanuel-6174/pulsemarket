@@ -2,29 +2,44 @@ name: PulseMarket CI Pipeline
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main, feat/* ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ main ]
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout del código
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Configurar Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
           cache: 'npm'
 
-      - name: Install dependencies
-        run: npm install --legacy-peer-deps
+      - name: Instalar dependencias
+        run: npm ci --legacy-peer-deps
 
-      - name: Check TypeScript types
+      - name: Generar Cliente Prisma
+        run: npx prisma generate
+
+      - name: Verificación de Tipos TypeScript
         run: npx tsc --noEmit
 
-      - name: Run Linter (No 'any' allowed)
+      - name: Linter ESLint
         run: npm run lint
+
+      - name: Ejecutar Pruebas Unitarias (Vitest)
+        run: npm run test:unit
+
+      - name: Instalar Navegadores de Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Ejecutar Pruebas E2E (Playwright)
+        run: npm run test:e2e
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
