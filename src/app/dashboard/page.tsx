@@ -1,4 +1,5 @@
 // pagina del dashboard
+export const dynamic = 'force-dynamic'; // para que la pagina se actualice cada vez que se carga
 import { Suspense } from "react";
 import { auth, signOut } from "@/auth";
 import { getDashboardData, updateSaleStatusAction } from "@/app/actions/dashboard";
