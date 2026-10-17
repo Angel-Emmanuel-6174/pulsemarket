@@ -1,4 +1,3 @@
-// configuracion para los tests
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import path from 'path';
@@ -9,6 +8,9 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./vitest.setup.ts'],
+    include: ['src/__tests__/**/*.test.ts'],
+    exclude: ['**/node_modules/**', '**/e2e/**'],
+    fileParallelism: false,
   },
   resolve: {
     alias: {
