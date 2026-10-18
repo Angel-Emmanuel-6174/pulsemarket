@@ -1,17 +1,18 @@
 import Link from "next/link";
 import { getSales, softDeleteSale } from "@/app/actions/sales";
 
+// Fuerza el renderizado dinámico SSR y evita la generación estática durante 'next build'
+export const dynamic = "force-dynamic";
+
 export default async function ProductsCRUDPage({
   searchParams,
 }: {
   searchParams?: { page?: string; search?: string };
 }) {
-  // 1. Convertir y asegurar valores por defecto
   const page = searchParams?.page ? Number(searchParams.page) : 1;
   const search = searchParams?.search || "";
   const limit = 10;
 
-  // 2. Ejecución con objeto tipado correctamente
   const { data: sales, pagination } = await getSales({
     page: isNaN(page) ? 1 : page,
     limit,
@@ -21,7 +22,7 @@ export default async function ProductsCRUDPage({
   return (
     <div className="min-h-screen bg-gray-50 p-6 dark:bg-gray-900 dark:text-white">
       <div className="mx-auto max-w-7xl space-y-6">
-        {/* Header */}
+        {/* Encabezado */}
         <header className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
@@ -81,7 +82,7 @@ export default async function ProductsCRUDPage({
                       <form
                         action={async () => {
                           "use server";
-                          await softDeleteSale(sale.id); // Soft Delete[cite: 5]
+                          await softDeleteSale(sale.id);
                         }}
                       >
                         <button
@@ -98,7 +99,7 @@ export default async function ProductsCRUDPage({
             </table>
           </div>
 
-          {/* Controles de Paginación */}
+          {/* Paginación */}
           <div className="mt-4 flex items-center justify-between text-sm">
             <span>
               Página <strong>{pagination?.page}</strong> de <strong>{pagination?.totalPages}</strong> ({pagination?.total} registros)
