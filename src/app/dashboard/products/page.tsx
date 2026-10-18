@@ -1,9 +1,6 @@
 import Link from "next/link";
 import { getSales, softDeleteSale } from "@/app/actions/sales";
 
-// Fuerza el renderizado dinámico SSR y evita la generación estática durante 'next build'
-export const dynamic = "force-dynamic";
-
 export default async function ProductsCRUDPage({
   searchParams,
 }: {
@@ -99,7 +96,7 @@ export default async function ProductsCRUDPage({
             </table>
           </div>
 
-          {/* Paginación */}
+          {/* Controles de Paginación */}
           <div className="mt-4 flex items-center justify-between text-sm">
             <span>
               Página <strong>{pagination?.page}</strong> de <strong>{pagination?.totalPages}</strong> ({pagination?.total} registros)
