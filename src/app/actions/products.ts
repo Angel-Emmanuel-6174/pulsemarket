@@ -8,9 +8,11 @@ import {
 
 // Ajuste Masivo de Precios por Categoría (Bulk Update)
 export async function bulkUpdateProductPrices(input: BulkUpdateProductPriceInput) {
-  const { category, percentageChange } = bulkUpdateProductPriceSchema.parse(input);
+  // Reemplaza la línea 11 (o donde parsees el input) por:
+const { category, percentageChange = 0 } = bulkUpdateProductPriceSchema.parse(input);
 
-  const multiplier = 1 + percentageChange / 100;
+// Ahora el cálculo de la línea 13 no marcará error:
+const multiplier = 1 + percentageChange / 100;
 
   // Transacción segura para actualizar precios en lote
   const products = await prisma.product.findMany({
