@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { getSales, softDeleteSale } from "@/app/actions/sales";
 
-export default async function ProductsCRUDPage({
-  searchParams,
-}: {
-  searchParams?: { page?: string; search?: string };
+export default async function ProductsCRUDPage(props: {
+  searchParams?: Promise<{ page?: string; search?: string }>;
 }) {
+  // Resolucion asincrona de searchParams compatible con Next.js 15
+  const searchParams = await props.searchParams;
   const page = searchParams?.page ? Number(searchParams.page) : 1;
   const search = searchParams?.search || "";
   const limit = 10;
