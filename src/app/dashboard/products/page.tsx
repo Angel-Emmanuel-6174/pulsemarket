@@ -1,6 +1,9 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { getSales, softDeleteSale } from "@/app/actions/sales";
+import { StatusSelect } from "@/components/dashboard/StatusSelect";
+import { CreateSaleModalButton } from "@/components/dashboard/CreateSaleModalButton";
+import { OrderStatus } from "@/lib/validations/sale";
 
 // 1. Componente asíncrono que consume searchParams y realiza la consulta a Supabase
 async function ProductsTableContent({
@@ -39,7 +42,7 @@ async function ProductsTableContent({
               <th className="px-4 py-3">Cliente</th>
               <th className="px-4 py-3">Producto</th>
               <th className="px-4 py-3">Monto Total</th>
-              <th className="px-4 py-3">Estado</th>
+              <th className="px-4 py-3">Estado Rápido</th>
               <th className="px-4 py-3">Acciones</th>
             </tr>
           </thead>
@@ -53,9 +56,7 @@ async function ProductsTableContent({
                 <td className="px-4 py-3">{sale.product.name}</td>
                 <td className="px-4 py-3">${sale.totalAmount.toFixed(2)}</td>
                 <td className="px-4 py-3">
-                  <span className="rounded bg-blue-100 px-2.5 py-0.5 text-xs font-semibold text-blue-800 dark:bg-blue-900 dark:text-blue-300">
-                    {sale.status}
-                  </span>
+                  <StatusSelect saleId={sale.id} currentStatus={sale.status as OrderStatus} />
                 </td>
                 <td className="px-4 py-3">
                   <form
@@ -123,12 +124,15 @@ export default function ProductsCRUDPage(props: {
               Consulta optimizada sobre +10,000 registros en Supabase
             </p>
           </div>
-          <Link
-            href="/dashboard"
-            className="rounded-lg bg-gray-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-600"
-          >
-            ← Volver al Dashboard
-          </Link>
+          <div className="flex items-center gap-3">
+            <CreateSaleModalButton />
+            <Link
+              href="/dashboard"
+              className="rounded-lg bg-gray-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-600"
+            >
+              ← Volver al Dashboard
+            </Link>
+          </div>
         </header>
 
         {/* Límite de Suspense para aislar el prerenderizado dinámico */}
